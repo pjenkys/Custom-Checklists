@@ -3,119 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sklad Scanner</title>
+    <title>Sklad Scanner Pro</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f4f4f9; }
-        h1 { text-align: center; color: #333; }
-        #reader { width: 100%; margin-bottom: 20px; border-radius: 8px; overflow: hidden; display: none; }
-        .btn { display: block; width: 100%; padding: 15px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; margin-bottom: 10px; text-align: center; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 15px; background: #f0f2f5; color: #333; }
+        h1 { text-align: center; margin-bottom: 20px; font-size: 1.5rem; }
+        
+        /* Styly pro ovládací prvky */
+        .controls-container { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #555; }
+        select, input, .btn { width: 100%; padding: 12px; box-sizing: border-box; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; -webkit-appearance: none; }
+        select { background: #fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23333' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right .75rem center/8px 10px; }
+        
+        .btn { background: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; text-align: center; transition: background 0.2s; }
+        .btn:active { background: #0056b3; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; color: #666; }
         .btn-stop { background: #dc3545; display: none; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 20px; display: none; }
-        .card h2 { margin-top: 0; }
-        .row { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 10px 0; }
-        .label { font-weight: bold; color: #666; }
-        input { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        
+        /* Okno kamery */
+        #reader { width: 100%; margin-bottom: 15px; border-radius: 12px; overflow: hidden; display: none; background: #000; }
+        
+        /* Karta s výsledky */
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; animation: slideUp 0.3s ease-out; }
+        .card h2 { margin-top: 0; color: #007bff; font-size: 1.3rem; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-bottom: 15px; }
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+        .data-row:last-child { border-bottom: none; }
+        .label-txt { font-weight: 600; color: #666; flex-shrink: 0; margin-right: 15px; }
+        .value-txt { text-align: right; word-break: break-word; font-family: monospace; font-size: 1.1em; }
+        .supplier-box { background: #f9f9f9; padding: 10px; border-radius: 8px; font-size: 0.9em; margin-top: 10px; }
+
+        /* Chybová hláška */
+        #error { background: #fff3f3; color: #dc3545; border: 1px solid #ffcdd2; text-align: center; padding: 15px; border-radius: 8px; display: none; font-weight: bold; }
+        
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <h1>📦 Skladová Kontrola</h1>
+    <h1>🔍 Inventura Pro</h1>
     
-    <div id="reader"></div>
+    <div class="controls-container">
+        <label for="storeSelect">1. Vyberte obchod (STORE):</label>
+        <select id="storeSelect">
+            <option value="">Načítám data...</option>
+        </select>
 
-    <button id="startBtn" class="btn" onclick="startScan()">📷 Skenovat EAN</button>
-    <button id="stopBtn" class="btn btn-stop" onclick="stopScan()">❌ Zastavit kameru</button>
-
-    <input type="number" id="manualInput" placeholder="Nebo zadejte kód ručně..." oninput="manualSearch(this.value)">
+        <label for="manualInput">2. Naskenujte nebo zadejte kód:</label>
+        <div id="reader"></div>
+        <button id="startBtn" class="btn" onclick="startScan()" disabled>📷 Zapnout kameru</button>
+        <button id="stopBtn" class="btn btn-stop" onclick="stopScan()">❌ Zastavit kameru</button>
+        <input type="number" id="manualInput" placeholder="EAN / TPN / TPNB..." oninput="manualSearch(this.value)" disabled>
+    </div>
 
     <div id="result" class="card">
-        <h2 id="resName">Názve produktu</h2>
-        <div class="row"><span class="label">EAN:</span> <span id="resEan"></span></div>
-        <div class="row"><span class="label">Cena:</span> <span id="resPrice"></span></div>
-        <div class="row"><span class="label">Lokace:</span> <span id="resLoc"></span></div>
+        <h2 id="resDesc">Název produktu</h2>
+        <div class="data-row"><span class="label-txt">Obchod:</span> <span id="resStore" class="value-txt"></span></div>
+        <div class="data-row"><span class="label-txt">EAN:</span> <span id="resEan" class="value-txt"></span></div>
+        <div class="data-row"><span class="label-txt">TPN:</span> <span id="resTpn" class="value-txt"></span></div>
+        <div class="data-row"><span class="label-txt">TPNB:</span> <span id="resTpnb" class="value-txt"></span></div>
+        <div class="data-row"><span class="label-txt">DRG / Komment:</span> <span class="value-txt"><span id="resDrg"></span> / <span id="resKomment"></span></span></div>
+        
+        <div style="margin-top: 15px; font-weight: bold; color: #555;">Dodavatel:</div>
+        <div class="supplier-box" id="resSupplier"></div>
     </div>
 
-    <div id="error" class="card" style="display:none; color: red; text-align: center;">
-        Nenalezeno v databázi.
+    <div id="error">
+        ❌ Kód nenalezen ve vybraném obchodě.
     </div>
 
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <script>
         let inventoryData = [];
         let html5QrCode;
+        const storeSelect = document.getElementById('storeSelect');
+        const startBtn = document.getElementById('startBtn');
+        const manualInput = document.getElementById('manualInput');
+        // Zvuk pro úspěšné naskenování (volitelné)
+        // const beep = new Audio('data:audio/wav;base64,UklGRl9vT1WAX1x... (zkráceno)'); 
 
-        // 1. Načtení dat z CSV při startu
+        // 1. Načtení dat při startu
         Papa.parse("data.csv", {
             download: true,
             header: true,
+            skipEmptyLines: true,
             complete: function(results) {
                 inventoryData = results.data;
-                console.log("Data načtena:", inventoryData);
+                console.log("Data načtena, řádků:", inventoryData.length);
+                populateStoreDropdown();
+            },
+            error: function(err) {
+                alert("Chyba načítání data.csv: " + err);
             }
         });
 
-        // 2. Funkce pro hledání
-        function search(ean) {
-            const item = inventoryData.find(row => row.ean && row.ean.trim() === ean.toString());
+        // 2. Naplnění dropdown menu obchody
+        function populateStoreDropdown() {
+            // Získáme unikátní seznam obchodů ze sloupce 'STORE'
+            const stores = [...new Set(inventoryData.map(item => item.STORE).filter(s => s))];
+            // Seřadíme je numericky nebo abecedně
+            stores.sort((a, b) => a - b);
+
+            storeSelect.innerHTML = '<option value="">-- Vyberte obchod --</option>';
+            stores.forEach(store => {
+                const option = document.createElement('option');
+                option.value = store;
+                option.textContent = "Obchod " + store;
+                storeSelect.appendChild(option);
+            });
+        }
+
+        // Aktivace/deaktivace prvků podle výběru obchodu
+        storeSelect.addEventListener('change', function() {
+            const isSelected = this.value !== "";
+            startBtn.disabled = !isSelected;
+            manualInput.disabled = !isSelected;
+            
+            // Reset zobrazení při změně obchodu
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            manualInput.value = '';
+            if (!isSelected) stopScan();
+        });
+
+
+        // 3. Hlavní vyhledávací funkce
+        function search(query) {
+            const selectedStore = storeSelect.value;
+            if (!selectedStore) {
+                alert("Prosím, nejprve vyberte obchod.");
+                return;
+            }
+
+            const cleanedQuery = query.toString().trim();
+
+            // HLAVNÍ LOGIKA: Filtruj podle obchodu A ZÁROVEŇ hledej v EAN, TPN nebo TPNB
+            const item = inventoryData.find(row => {
+                // Podmínka 1: Řádek musí patřit vybranému obchodu
+                const storeMatch = row.STORE == selectedStore;
+                
+                // Podmínka 2: Kód se musí shodovat s jedním z těchto sloupců
+                // Používáme volné porovnání (==) a trim() pro jistotu, že sedí stringy i čísla
+                const codeMatch = (row.EAN && row.EAN.trim() == cleanedQuery) ||
+                                  (row.TPN && row.TPN.trim() == cleanedQuery) ||
+                                  (row.TPNB && row.TPNB.trim() == cleanedQuery);
+
+                return storeMatch && codeMatch;
+            });
             
             if (item) {
-                document.getElementById('result').style.display = 'block';
-                document.getElementById('error').style.display = 'none';
-                document.getElementById('resName').textContent = item.nazev || "Neznámý název";
-                document.getElementById('resEan').textContent = item.ean;
-                document.getElementById('resPrice').textContent = item.cena + " Kč";
-                document.getElementById('resLoc').textContent = item.lokace;
-                // Pípnutí (volitelné)
-                // new Audio('beep.mp3').play(); 
+                // if(beep) beep.play(); // Pípnutí
+                showResult(item);
             } else {
-                document.getElementById('result').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
+                showError();
             }
+        }
+
+        // Zobrazení výsledku (napojení na vaši strukturu dat)
+        function showResult(item) {
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            
+            // Pozor: Sloupec v Excelu se jmenuje "Desc." (s tečkou), v JS musíme použít závorky ['Desc.']
+            document.getElementById('resDesc').textContent = item['Desc.'] || "Bez názvu";
+            document.getElementById('resStore').textContent = item.STORE;
+            document.getElementById('resEan').textContent = item.EAN || "-";
+            document.getElementById('resTpn').textContent = item.TPN || "-";
+            document.getElementById('resTpnb').textContent = item.TPNB || "-";
+            document.getElementById('resDrg').textContent = item.DRG || "";
+            document.getElementById('resKomment').textContent = item.KOMMENT || "";
+            document.getElementById('resSupplier').textContent = item.Supplier || "";
+        }
+
+        function showError() {
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
         }
 
         function manualSearch(val) {
-            if(val.length > 3) search(val);
+            if(val.length >= 3) search(val);
         }
 
-        // 3. Skenování
+        // --- Funkce pro kameru (zůstávají stejné) ---
         function startScan() {
             document.getElementById('reader').style.display = 'block';
-            document.getElementById('startBtn').style.display = 'none';
+            startBtn.style.display = 'none';
             document.getElementById('stopBtn').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
 
             html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start(
-                { facingMode: "environment" }, 
-                { fps: 10, qrbox: { width: 250, height: 250 } },
+            // Zkusíme použít zadní kameru, preferujeme environment
+            const config = { fps: 10, qrbox: { width: 250, height: 250 }, defineReaderConfig: { cameraSupportsTorch: true } };
+            
+            html5QrCode.start({ facingMode: "environment" }, config,
                 (decodedText) => {
-                    // Úspěšné naskenování
                     stopScan();
-                    document.getElementById('manualInput').value = decodedText;
+                    manualInput.value = decodedText;
                     search(decodedText);
                 },
-                (errorMessage) => {
-                    // Ignorujeme chyby při skenování (děje se každým snímkem)
-                }
-            ).catch(err => console.log(err));
+                () => {} // Ignorujeme chyby při běhu skenování
+            ).catch(err => {
+                alert("Chyba kamery: Ujistěte se, že jste na HTTPS a povolili jste přístup.");
+                stopScan();
+            });
         }
 
         function stopScan() {
-            if(html5QrCode) {
+            if(html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop().then(() => {
-                    document.getElementById('reader').style.display = 'none';
-                    document.getElementById('startBtn').style.display = 'block';
-                    document.getElementById('stopBtn').style.display = 'none';
+                    resetCameraUI();
                     html5QrCode.clear();
-                }).catch(err => console.log(err));
+                }).catch(() => resetCameraUI());
+            } else {
+                resetCameraUI();
             }
         }
 
-        // 4. Registrace Service Workeru (pro offline)
+        function resetCameraUI() {
+            document.getElementById('reader').style.display = 'none';
+            startBtn.style.display = 'block';
+            document.getElementById('stopBtn').style.display = 'none';
+        }
+
+        // Registrace SW pro offline režim
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
         }
     </script>
 </body>
