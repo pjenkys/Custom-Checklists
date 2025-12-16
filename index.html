@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklad Scanner</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f4f4f9; }
+        h1 { text-align: center; color: #333; }
+        #reader { width: 100%; margin-bottom: 20px; border-radius: 8px; overflow: hidden; display: none; }
+        .btn { display: block; width: 100%; padding: 15px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; margin-bottom: 10px; text-align: center; }
+        .btn-stop { background: #dc3545; display: none; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 20px; display: none; }
+        .card h2 { margin-top: 0; }
+        .row { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 10px 0; }
+        .label { font-weight: bold; color: #666; }
+        input { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>📦 Skladová Kontrola</h1>
+    
+    <div id="reader"></div>
+
+    <button id="startBtn" class="btn" onclick="startScan()">📷 Skenovat EAN</button>
+    <button id="stopBtn" class="btn btn-stop" onclick="stopScan()">❌ Zastavit kameru</button>
+
+    <input type="number" id="manualInput" placeholder="Nebo zadejte kód ručně..." oninput="manualSearch(this.value)">
+
+    <div id="result" class="card">
+        <h2 id="resName">Názve produktu</h2>
+        <div class="row"><span class="label">EAN:</span> <span id="resEan"></span></div>
+        <div class="row"><span class="label">Cena:</span> <span id="resPrice"></span></div>
+        <div class="row"><span class="label">Lokace:</span> <span id="resLoc"></span></div>
+    </div>
+
+    <div id="error" class="card" style="display:none; color: red; text-align: center;">
+        Nenalezeno v databázi.
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+    <script>
+        let inventoryData = [];
+        let html5QrCode;
+
+        // 1. Načtení dat z CSV při startu
+        Papa.parse("data.csv", {
+            download: true,
+            header: true,
+            complete: function(results) {
+                inventoryData = results.data;
+                console.log("Data načtena:", inventoryData);
+            }
+        });
+
+        // 2. Funkce pro hledání
+        function search(ean) {
+            const item = inventoryData.find(row => row.ean && row.ean.trim() === ean.toString());
+            
+            if (item) {
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('error').style.display = 'none';
+                document.getElementById('resName').textContent = item.nazev || "Neznámý název";
+                document.getElementById('resEan').textContent = item.ean;
+                document.getElementById('resPrice').textContent = item.cena + " Kč";
+                document.getElementById('resLoc').textContent = item.lokace;
+                // Pípnutí (volitelné)
+                // new Audio('beep.mp3').play(); 
+            } else {
+                document.getElementById('result').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        function manualSearch(val) {
+            if(val.length > 3) search(val);
+        }
+
+        // 3. Skenování
+        function startScan() {
+            document.getElementById('reader').style.display = 'block';
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'block';
+
+            html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.start(
+                { facingMode: "environment" }, 
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (decodedText) => {
+                    // Úspěšné naskenování
+                    stopScan();
+                    document.getElementById('manualInput').value = decodedText;
+                    search(decodedText);
+                },
+                (errorMessage) => {
+                    // Ignorujeme chyby při skenování (děje se každým snímkem)
+                }
+            ).catch(err => console.log(err));
+        }
+
+        function stopScan() {
+            if(html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById('reader').style.display = 'none';
+                    document.getElementById('startBtn').style.display = 'block';
+                    document.getElementById('stopBtn').style.display = 'none';
+                    html5QrCode.clear();
+                }).catch(err => console.log(err));
+            }
+        }
+
+        // 4. Registrace Service Workeru (pro offline)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
