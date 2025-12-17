@@ -1,6 +1,6 @@
 {
-  "name": "Sklad Scanner",
-  "short_name": "Sklad",
+  "name": "Custom Checklists",
+  "short_name": "Custom Checklists",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
