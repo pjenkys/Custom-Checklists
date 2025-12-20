@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload data.csv</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 15px; }
+        textarea { width: 100%; height: 300px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Upload new data.csv</h1>
+    <p>1. Select your new data.csv file.</p>
+    <input type="file" id="csvFileInput" accept=".csv">
+    <p>2. Copy the content from the text area below.</p>
+    <textarea id="csvContent" placeholder="CSV content will appear here..."></textarea>
+    <p>3. Paste the content into the chat and I will update the file for you.</p>
+
+    <script>
+        document.getElementById('csvFileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('csvContent').value = e.target.result;
+                };
+                reader.readAsText(file);
+            }
+        });
+    </script>
+</body>
+</html>
