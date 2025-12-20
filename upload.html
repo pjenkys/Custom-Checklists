@@ -5,28 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload data.csv</title>
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 15px; }
-        textarea { width: 100%; height: 300px; margin-top: 10px; }
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 15px; background: #f4f4f4; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
+        textarea { width: 100%; box-sizing: border-box; height: 250px; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 12px 20px; margin-top: 10px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; width: 100%; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        #instructions { color: #333; margin-top: 15px; background: #e7f3ff; padding: 10px; border-radius: 4px; display: none; }
     </style>
 </head>
 <body>
-    <h1>Upload new data.csv</h1>
-    <p>1. Select your new data.csv file.</p>
-    <input type="file" id="csvFileInput" accept=".csv">
-    <p>2. Copy the content from the text area below.</p>
-    <textarea id="csvContent" placeholder="CSV content will appear here..."></textarea>
-    <p>3. Paste the content into the chat and I will update the file for you.</p>
+    <div class="container">
+        <h1>Update data.csv</h1>
+        <p><b>Step 1:</b> Select your new <code>data.csv</code> file.</p>
+        <input type="file" id="csvFileInput" accept=".csv">
+
+        <textarea id="csvContent" placeholder="Your CSV data will appear here..."></textarea>
+
+        <p><b>Step 2:</b> Click the button below to prepare the data.</p>
+        <button id="copyButton" disabled>Copy CSV Content</button>
+
+        <div id="instructions">
+            <p><b>Step 3:</b> Content has been copied to your clipboard!</p>
+            <p>Now, just paste it into our chat and I will update the <code>data.csv</code> file for you.</p>
+        </div>
+    </div>
 
     <script>
-        document.getElementById('csvFileInput').addEventListener('change', function(event) {
+        const fileInput = document.getElementById('csvFileInput');
+        const contentTextArea = document.getElementById('csvContent');
+        const copyButton = document.getElementById('copyButton');
+        const instructions = document.getElementById('instructions');
+
+        fileInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('csvContent').value = e.target.result;
+                    contentTextArea.value = e.target.result;
+                    copyButton.disabled = false;
+                    copyButton.textContent = 'Copy CSV Content';
+                    instructions.style.display = 'none';
                 };
                 reader.readAsText(file);
+            } else {
+                contentTextArea.value = '';
+                copyButton.disabled = true;
+                instructions.style.display = 'none';
             }
+        });
+
+        copyButton.addEventListener('click', function() {
+            contentTextArea.select();
+            document.execCommand('copy'); // Simple and robust fallback
+
+            copyButton.textContent = 'Content Copied!';
+            copyButton.disabled = true;
+            instructions.style.display = 'block';
+
+            // Unselect text
+            window.getSelection().removeAllRanges();
         });
     </script>
 </body>
