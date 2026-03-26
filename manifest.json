@@ -1,6 +1,6 @@
 {
-  "name": "Custom Checklists",
-  "short_name": "Custom Checklists",
+  "name": "KeepOrReturn",
+  "short_name": "KeepOrReturn",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
