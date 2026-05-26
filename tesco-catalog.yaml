@@ -1,0 +1,30 @@
+# Syntax: https://www.ourtesco.com/developer-portal/onboard/docs/yaml-template
+# Use validator: https://www.ourtesco.com/developer-portal/onboard/yaml-editor after each change
+name: KeepOrReturn
+brief_description: KeepOrReturn
+full_description: KeepOrReturn
+type: APP
+status: CONTAINED
+system_id: 4856  # PROD   # https://tesco.sharepoint.com/sites/Tescopedia/System.html?Id=2472   # https://tesco.sharepoint.com/sites/Tescopedia/System.html?Id=2472
+team_number: 715
+group_name: 715_CE_In_Store
+domain: Store
+owners:
+  - name: Vit Penkava
+    email: Vit.Penkava@tesco.com
+    title: TPM
+contact_team:
+  team_email: 715_CE_In_Store@tesco.com
+  zendesk_queue_name: 715_CE_In_Store
+  primary_contact_method: EMAIL
+dependencies:
+  depends_on:
+    - api_domain: 
+      team_number: 
+documentation:
+  - description: 
+    link: 
+# How: https://tesco.sharepoint.com/sites/Tescopedia/code.html?ID=318
+# List: https://tesco.sharepoint.com/sites/Tescopedia/roletag.html
+role_tag_ids:
+  - "0010158" # PROD

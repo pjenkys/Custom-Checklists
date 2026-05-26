@@ -1,14 +1,15 @@
 // POKAŽDÉ, KDYŽ ZMĚNÍTE DATA NEBO HTML, ZVYŠTE TOTO ČÍSLO (v1 -> v2 -> v3...)
-const VERSION = 'v2'; 
-const CACHE_NAME = 'sklad-app-' + VERSION;
+const VERSION = 'v6'; 
+const CACHE_NAME = 'Custom_Checklists' + VERSION;
 
 const ASSETS = [
   './',
   './index.html',
+  './index.css',
   './data.csv',
   './manifest.json',
-  'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js'
+  './html5-qrcode.min.js', // ZMĚNA: Lokální soubor
+  './papaparse.min.js'     // ZMĚNA: Lokální soubor
 ];
 
 // 1. INSTALACE: Uloží nové soubory a okamžitě převezme kontrolu (skipWaiting)

@@ -1,0 +1,440 @@
+/* index.css - Material 3 Expressive (Tesco Theme) */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Fonts */
+    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* Light Theme Tokens (Tesco Brand Derived) */
+    --md-sys-color-primary: #00539F; /* Tesco Blue */
+    --md-sys-color-primary-hover: #003d73;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #e5f1ff;
+    --md-sys-color-on-primary-container: #001b3d;
+    
+    --md-sys-color-secondary: #EE1C2E; /* Tesco Red */
+    --md-sys-color-secondary-hover: #c8102e;
+    --md-sys-color-on-secondary: #ffffff;
+    --md-sys-color-secondary-container: #ffebee;
+    --md-sys-color-on-secondary-container: #b71c1c;
+
+    --md-sys-color-surface: #ffffff;
+    --md-sys-color-surface-container: #f3f4f7;
+    --md-sys-color-surface-container-low: #f8f9fa;
+    --md-sys-color-surface-container-high: #e9ebf0;
+    --md-sys-color-on-surface: #1a1c1e;
+    --md-sys-color-on-surface-variant: #43474e;
+    
+    --md-sys-color-error: #ba1a1a;
+    --md-sys-color-error-container: #ffdad6;
+    --md-sys-color-on-error-container: #410002;
+
+    --md-sys-color-outline: #73777f;
+    --md-sys-color-outline-variant: #c3c6cf;
+    --md-sys-shadow: 0 4px 16px rgba(0, 83, 159, 0.08);
+    --md-sys-shadow-hover: 0 12px 32px rgba(0, 83, 159, 0.16);
+
+    /* Animation Easing (M3 Expressive Elastic Spring Easing) */
+    --md-sys-motion-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --md-sys-motion-duration: 0.35s;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Dark Theme Tokens */
+        --md-sys-color-primary: #8dcbff;
+        --md-sys-color-primary-hover: #bde0ff;
+        --md-sys-color-on-primary: #00325f;
+        --md-sys-color-primary-container: #004880;
+        --md-sys-color-on-primary-container: #d1e4ff;
+
+        --md-sys-color-secondary: #ffb4ab;
+        --md-sys-color-secondary-hover: #ffdad6;
+        --md-sys-color-on-secondary: #690005;
+        --md-sys-color-secondary-container: #93000a;
+        --md-sys-color-on-secondary-container: #ffdad6;
+
+        --md-sys-color-surface: #111318;
+        --md-sys-color-surface-container: #1d2026;
+        --md-sys-color-surface-container-low: #181b20;
+        --md-sys-color-surface-container-high: #272a31;
+        --md-sys-on-surface: #e2e2e9;
+        --md-sys-color-on-surface: #e2e2e9;
+        --md-sys-color-on-surface-variant: #c3c6cf;
+
+        --md-sys-color-error: #ffb4ab;
+        --md-sys-color-error-container: #93000a;
+        --md-sys-color-on-error-container: #ffdad6;
+
+        --md-sys-color-outline: #8d9199;
+        --md-sys-color-outline-variant: #43474e;
+        --md-sys-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        --md-sys-shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.6);
+    }
+}
+
+/* Base Body Styles */
+body {
+    font-family: var(--font-body);
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    background: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-on-surface);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Title Header */
+h1 {
+    font-family: var(--font-heading);
+    text-align: center;
+    margin-bottom: 28px;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--md-sys-color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    letter-spacing: -0.5px;
+}
+
+/* Main Controls Container */
+.controls-container {
+    background: var(--md-sys-color-surface);
+    padding: 24px;
+    border-radius: 28px; /* M3 Expressive shape */
+    box-shadow: var(--md-sys-shadow);
+    margin-bottom: 24px;
+    border: 1px solid var(--md-sys-color-surface-container-high);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.controls-container:hover {
+    box-shadow: var(--md-sys-shadow-hover);
+}
+
+label {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+    color: var(--md-sys-color-primary);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Form inputs & Selects */
+select, input {
+    width: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+    border: 2px solid var(--md-sys-color-surface-container-high);
+    border-radius: 16px;
+    font-size: 16px;
+    font-family: var(--font-body);
+    background: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-on-surface);
+    transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+    -webkit-appearance: none;
+    outline: none;
+}
+
+select:focus, input:focus {
+    border-color: var(--md-sys-color-primary);
+    background: var(--md-sys-color-surface);
+    box-shadow: 0 0 0 4px var(--md-sys-color-primary-container);
+}
+
+select {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%2300539F' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.25rem center;
+    background-size: 10px 12px;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+    select {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%238dcbff' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E");
+    }
+}
+
+/* Buttons */
+.btn {
+    width: 100%;
+    padding: 16px 24px;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 100px; /* Fully rounded M3 Pill */
+    font-size: 16px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform var(--md-sys-motion-duration) var(--md-sys-motion-easing),
+                background-color 0.25s ease,
+                box-shadow 0.25s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--md-sys-color-primary-hover);
+    box-shadow: 0 4px 12px rgba(0, 83, 159, 0.3);
+}
+
+.btn:active:not(:disabled) {
+    transform: scale(0.96);
+}
+
+.btn:disabled {
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-outline);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-stop {
+    background: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-secondary);
+    display: none;
+}
+
+.btn-stop:hover {
+    background: var(--md-sys-color-secondary-hover);
+    box-shadow: 0 4px 12px rgba(238, 28, 46, 0.3);
+}
+
+/* Camera Reader Container */
+#reader {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 24px;
+    overflow: hidden;
+    display: none;
+    background: #000;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    border: 3px solid var(--md-sys-color-primary);
+}
+
+/* Results Card - Expressive Layout */
+.card {
+    background: var(--md-sys-color-surface);
+    padding: 24px;
+    border-radius: 28px;
+    box-shadow: var(--md-sys-shadow);
+    border: 1px solid var(--md-sys-color-surface-container-high);
+    display: none;
+    animation: slideUp var(--md-sys-motion-duration) var(--md-sys-motion-easing);
+    margin-bottom: 24px;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(32px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Hero Section (Item Title & Store Tag) */
+.result-hero {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    border-bottom: 2px dashed var(--md-sys-color-surface-container-high);
+    padding-bottom: 20px;
+}
+
+.hero-icon {
+    font-size: 2.5rem;
+    background: var(--md-sys-color-primary-container);
+    padding: 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--md-sys-color-primary);
+    flex-shrink: 0;
+}
+
+.hero-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.store-chip {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 100px;
+    align-self: flex-start;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.product-title {
+    margin: 0;
+    font-family: var(--font-heading);
+    color: var(--md-sys-color-on-surface);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+/* Sections for Comment & Supplier (Most Important Fields) */
+.result-section {
+    padding: 16px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: transform 0.2s ease;
+}
+
+.result-section:hover {
+    transform: translateY(-2px);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-content {
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* Comment section uses Tesco Red container for expressiveness */
+.comment-section {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    border-left: 6px solid var(--md-sys-color-secondary);
+}
+
+.comment-section .section-header {
+    color: var(--md-sys-color-secondary);
+}
+
+.comment-text {
+    font-family: var(--font-heading);
+}
+
+/* Supplier section uses clear highlighted card container */
+.supplier-section {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    border-left: 6px solid var(--md-sys-color-primary);
+}
+
+.supplier-section .section-header {
+    color: var(--md-sys-color-primary);
+}
+
+/* Technical Details Grid (Secondary parameters) */
+.tech-details-container {
+    margin-top: 24px;
+    background: var(--md-sys-color-surface-container);
+    padding: 16px;
+    border-radius: 20px;
+}
+
+.tech-title {
+    margin: 0 0 12px 0;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--md-sys-color-on-surface-variant);
+    letter-spacing: 0.5px;
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.tech-item {
+    background: var(--md-sys-color-surface);
+    padding: 10px 14px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border: 1px solid var(--md-sys-color-surface-container-high);
+}
+
+.tech-label {
+    font-size: 0.75rem;
+    color: var(--md-sys-color-on-surface-variant);
+    font-weight: 600;
+}
+
+.tech-value {
+    font-family: monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface);
+    word-break: break-all;
+}
+
+/* Error Display (Not Found) */
+#error {
+    background: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+    border: 2px solid var(--md-sys-color-error);
+    text-align: center;
+    padding: 18px;
+    border-radius: 20px;
+    display: none;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}

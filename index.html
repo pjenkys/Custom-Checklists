@@ -3,56 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Checklists</title>
-    <link rel="manifest" href="manifest.json">
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 15px; background: #f0f2f5; color: #333; }
-        h1 { text-align: center; margin-bottom: 20px; font-size: 1.5rem; }
-        
-        /* Styly pro ovládací prvky */
-        .controls-container { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        label { font-weight: bold; display: block; margin-bottom: 5px; color: #555; }
-        select, input, .btn { width: 100%; padding: 12px; box-sizing: border-box; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; -webkit-appearance: none; }
-        select { background: #fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23333' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right .75rem center/8px 10px; }
-        
-        .btn { background: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; text-align: center; transition: background 0.2s; }
-        .btn:active { background: #0056b3; }
-        .btn:disabled { background: #ccc; cursor: not-allowed; color: #666; }
-        .btn-stop { background: #dc3545; display: none; }
-        
-        /* Okno kamery */
-        #reader { width: 100%; margin-bottom: 15px; border-radius: 12px; overflow: hidden; display: none; background: #000; }
-        
-        /* Karta s výsledky */
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; animation: slideUp 0.3s ease-out; }
-        .card h2 { margin-top: 0; color: #007bff; font-size: 1.3rem; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-bottom: 15px; }
-        .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
-        .data-row:last-child { border-bottom: none; }
-        .label-txt { font-weight: 600; color: #666; flex-shrink: 0; margin-right: 15px; }
-        .value-txt { text-align: right; word-break: break-word; font-family: monospace; font-size: 1.1em; }
-        .supplier-box { background: #f9f9f9; padding: 10px; border-radius: 8px; font-size: 0.9em; margin-top: 10px; }
-
-        /* Chybová hláška */
-        #error { background: #fff3f3; color: #dc3545; border: 1px solid #ffcdd2; text-align: center; padding: 15px; border-radius: 8px; display: none; font-weight: bold; }
-        
-        .admin-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #6c757d;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    </style>
+    <title>Keep Or Return</title>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="./index.css">
 </head>
 <body>
-    <a href="upload.html" class="admin-btn">Admin</a>
-    <h1>🔍 Custom Checklists</h1>
+
+    <h1>🔍 Keep Or Return</h1>
     
     <div class="controls-container">
         <label for="storeSelect">1. Vyberte obchod (STORE):</label>
@@ -62,29 +19,75 @@
 
         <label for="manualInput">2. Naskenujte nebo zadejte kód:</label>
         <div id="reader"></div>
-        <button id="startBtn" class="btn" onclick="startScan()" disabled>📷 Zapnout kameru</button>
+        <button id="startBtn" class="btn btn-primary" onclick="startScan()" disabled>📷 Zapnout kameru</button>
         <button id="stopBtn" class="btn btn-stop" onclick="stopScan()">❌ Zastavit kameru</button>
         <input type="number" id="manualInput" placeholder="EAN / TPN / TPNB..." oninput="manualSearch(this.value)" disabled>
     </div>
 
     <div id="result" class="card">
-        <h2 id="resDesc">Název produktu</h2>
-        <div class="data-row"><span class="label-txt">Obchod:</span> <span id="resStore" class="value-txt"></span></div>
-        <div class="data-row"><span class="label-txt">EAN:</span> <span id="resEan" class="value-txt"></span></div>
-        <div class="data-row"><span class="label-txt">TPN:</span> <span id="resTpn" class="value-txt"></span></div>
-        <div class="data-row"><span class="label-txt">TPNB:</span> <span id="resTpnb" class="value-txt"></span></div>
-        <div class="data-row"><span class="label-txt">DRG / Komment:</span> <span class="value-txt"><span id="resDrg"></span> / <span id="resKomment"></span></span></div>
-        
-        <div style="margin-top: 15px; font-weight: bold; color: #555;">Dodavatel:</div>
-        <div class="supplier-box" id="resSupplier"></div>
+        <!-- Hero: Product Title & Store Tag -->
+        <div class="result-hero">
+            <div class="hero-icon">📦</div>
+            <div class="hero-details">
+                <span class="store-chip" id="resStoreChip">Obchod</span>
+                <h2 id="resDesc" class="product-title">Název produktu</h2>
+            </div>
+        </div>
+
+        <!-- Highlighted Comment Box -->
+        <div class="result-section comment-section" id="resCommentBox">
+            <div class="section-header">
+                <span class="section-icon">💬</span>
+                <span class="section-label">Komentář</span>
+            </div>
+            <div class="section-content comment-text" id="resKomment">-</div>
+        </div>
+
+        <!-- Highlighted Supplier Box -->
+        <div class="result-section supplier-section" id="resSupplierBox">
+            <div class="section-header">
+                <span class="section-icon">🏭</span>
+                <span class="section-label">Dodavatel</span>
+            </div>
+            <div class="section-content supplier-text" id="resSupplier">-</div>
+        </div>
+
+        <!-- Technical Parameters Grid -->
+        <div class="tech-details-container">
+            <h3 class="tech-title">Technické údaje</h3>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <span class="tech-label">EAN</span>
+                    <span class="tech-value" id="resEan">-</span>
+                </div>
+                <div class="tech-item">
+                    <span class="tech-label">TPN</span>
+                    <span class="tech-value" id="resTpn">-</span>
+                </div>
+                <div class="tech-item">
+                    <span class="tech-label">TPNB</span>
+                    <span class="tech-value" id="resTpnb">-</span>
+                </div>
+                <div class="tech-item">
+                    <span class="tech-label">DRG</span>
+                    <span class="tech-value" id="resDrg">-</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="error">
         ❌ Kód nenalezen ve vybraném obchodě.
     </div>
 
-    <script src="html5-qrcode.min.js"></script>
-    <script src="papaparse.min.js"></script>
+    <script>
+        window.onerror = function(msg, url, line) {
+            alert("⚠️ CHYBA APLIKACE:\n" + msg + "\nSoubor: " + url + "\nŘádek: " + line);
+        };
+    </script>
+
+    <script src="./html5-qrcode.min.js"></script>
+    <script src="./papaparse.min.js"></script>
 
     <script>
         let inventoryData = [];
@@ -92,21 +95,25 @@
         const storeSelect = document.getElementById('storeSelect');
         const startBtn = document.getElementById('startBtn');
         const manualInput = document.getElementById('manualInput');
-        // Zvuk pro úspěšné naskenování (volitelné)
-        // const beep = new Audio('data:audio/wav;base64,UklGRl9vT1WAX1x... (zkráceno)'); 
 
         // 1. Načtení dat při startu
-        Papa.parse("data.csv", {
+        Papa.parse("./data.csv", { // ZMĚNA: Přidáno ./ pro jistotu
             download: true,
             header: true,
             skipEmptyLines: true,
             complete: function(results) {
                 inventoryData = results.data;
                 console.log("Data načtena, řádků:", inventoryData.length);
+                
+                // DIAGNOSTIKA: Kontrola prázdných dat
+                if (!inventoryData || inventoryData.length === 0) {
+                     alert("⚠️ Data načtena, ale jsou prázdná! Zkontrolujte data.csv.");
+                }
+                
                 populateStoreDropdown();
             },
             error: function(err) {
-                alert("Chyba načítání data.csv: " + err);
+                alert("❌ Chyba načítání data.csv: " + err.message);
             }
         });
 
@@ -179,18 +186,36 @@
             
             // Pozor: Sloupec v Excelu se jmenuje "Desc." (s tečkou), v JS musíme použít závorky ['Desc.']
             document.getElementById('resDesc').textContent = item['Desc.'] || "Bez názvu";
-            document.getElementById('resStore').textContent = item.STORE;
+            document.getElementById('resStoreChip').textContent = "Obchod " + (item.STORE || "");
             document.getElementById('resEan').textContent = item.EAN || "-";
             document.getElementById('resTpn').textContent = item.TPN || "-";
             document.getElementById('resTpnb').textContent = item.TPNB || "-";
-            document.getElementById('resDrg').textContent = item.DRG || "";
-            document.getElementById('resKomment').textContent = item.KOMMENT || "";
-            document.getElementById('resSupplier').textContent = item.Supplier || "";
+            document.getElementById('resDrg').textContent = item.DRG || "-";
+            
+            // Comment visibility and text
+            const commentBox = document.getElementById('resCommentBox');
+            if (item.KOMMENT && item.KOMMENT.trim() !== "") {
+                document.getElementById('resKomment').textContent = item.KOMMENT;
+                commentBox.style.display = 'flex';
+            } else {
+                commentBox.style.display = 'none';
+            }
+            
+            // Supplier visibility and text
+            const supplierBox = document.getElementById('resSupplierBox');
+            if (item.Supplier && item.Supplier.trim() !== "") {
+                document.getElementById('resSupplier').textContent = item.Supplier;
+                supplierBox.style.display = 'flex';
+            } else {
+                supplierBox.style.display = 'none';
+            }
         }
 
         function showError() {
             document.getElementById('result').style.display = 'none';
-            document.getElementById('error').style.display = 'block';
+            
+            const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'flex';
         }
 
         function manualSearch(val) {

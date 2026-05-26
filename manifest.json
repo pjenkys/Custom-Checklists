@@ -1,15 +1,22 @@
 {
-  "name": "Custom Checklists",
-  "short_name": "Custom Checklists",
+  "short_name": "Keep Or Return",
+  "name": "Keep Or Return",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#007bff",
+  "theme_color": "#00539f",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/265/265754.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/265/265754.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ]
 }
